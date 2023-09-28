@@ -18,14 +18,14 @@ public class SunsetSunriseController: ControllerBase
     }
     
     [HttpGet]
-    public IActionResult GetByLatLng(double lat, double lng)
+    public async Task<IActionResult> GetByLatLng(double lat, double lng)
     {
         try
         {
-            HttpResponseMessage responseMessage = _httpClient.GetAsync($"{baseEndpoint}lat={lat}&lng={lng}").Result;
+            HttpResponseMessage responseMessage = await _httpClient.GetAsync($"{baseEndpoint}lat={lat}&lng={lng}");
             if (responseMessage.IsSuccessStatusCode)
             {
-                string jsonResponse = responseMessage.Content.ReadAsStringAsync().Result;
+                string jsonResponse = await responseMessage.Content.ReadAsStringAsync();
 
                 using (JsonDocument doc = JsonDocument.Parse(jsonResponse))
                 {
