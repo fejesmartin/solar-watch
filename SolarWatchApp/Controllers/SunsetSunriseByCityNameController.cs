@@ -17,21 +17,20 @@ public class SunsetSunriseByCityNameController: ControllerBase
     
     
     [HttpGet]
-    public IActionResult GetSRiseAndSRetByCityName(string name)
+    public async Task<IActionResult> GetSRiseAndSRetByCityName(string name)
     {
         try
         {
-            HttpResponseMessage cityResponse = _httpClient
-                .GetAsync($"http://localhost:5174/api/get/Geocoding/city-by-lat-lng/lat-lng-by-cityname?name={name}")
-                .Result;
+            HttpResponseMessage cityResponse = await _httpClient
+                .GetAsync($"http://localhost:5174/api/get/Geocoding/city-by-lat-lng/lat-lng-by-cityname?name={name}");
             var location = new Location(0, 0);
             var sunsetSunrise = new SunsetSunrise("","");
             
             if (cityResponse.IsSuccessStatusCode)
             {
-                var jsonResponseCity = cityResponse.Content.ReadAsStreamAsync().Result;
+                var jsonResponseCity = await cityResponse.Content.ReadAsStreamAsync();
 
-                using (JsonDocument doc = JsonDocument.Parse(jsonResponseCity))
+                using (JsonDocument doc = await JsonDocument.ParseAsync(jsonResponseCity))
                 {
                     var root = doc.RootElement;
                     var lat = root.GetProperty("lat").GetDouble();

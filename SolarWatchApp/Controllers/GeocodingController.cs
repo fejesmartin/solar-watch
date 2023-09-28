@@ -19,17 +19,17 @@ public class GeocodingController: ControllerBase
     }
     
     [HttpGet]
-    public IActionResult GetCityByLatAndLng(double lat, double lng)
+    public async Task<IActionResult> GetCityByLatAndLng(double lat, double lng)
     {
         //http://api.openweathermap.org/geo/1.0/reverse?lat={lat}&lon={lon}&limit={limit}&appid={API key}
         try
         {
             HttpResponseMessage response =
-                _httpClient.GetAsync($"{baseUrlReverse}lat={lat}&lon={lng}&limit=1&appid={APIKey}").Result;
+               await _httpClient.GetAsync($"{baseUrlReverse}lat={lat}&lon={lng}&limit=1&appid={APIKey}");
             if (response.IsSuccessStatusCode)
             {
                 // Read the JSON response as a string
-                string jsonResponse = response.Content.ReadAsStringAsync().Result;
+                string jsonResponse = await response.Content.ReadAsStringAsync();
 
                 // Parse the JSON string to a JSON document
                 using (JsonDocument doc = JsonDocument.Parse(jsonResponse))
@@ -53,18 +53,18 @@ public class GeocodingController: ControllerBase
     }
 
     [HttpGet("lat-lng-by-cityname")]
-    public IActionResult GetLatAndLngByCityName(string name)
+    public async Task<IActionResult> GetLatAndLngByCityName(string name)
     {
         //http://api.openweathermap.org/geo/1.0/direct?q=London&limit=5&appid={API key}
         try
         {
-            HttpResponseMessage response = _httpClient.GetAsync($"{baseUrl}{name}&limit=1&appid={APIKey}").Result;
+            HttpResponseMessage response = await _httpClient.GetAsync($"{baseUrl}{name}&limit=1&appid={APIKey}");
 
             if (response.IsSuccessStatusCode)
             {
-                var jsonResponse = response.Content.ReadAsStreamAsync().Result;
+                var jsonResponse = await response.Content.ReadAsStreamAsync();
 
-                using (JsonDocument doc = JsonDocument.Parse(jsonResponse))
+                using (JsonDocument doc = await JsonDocument.ParseAsync(jsonResponse))
                 {
                     var root = doc.RootElement;
 
