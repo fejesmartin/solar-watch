@@ -22,7 +22,7 @@ public class SunsetSunriseByCityNameController: ControllerBase
         try
         {
             HttpResponseMessage cityResponse = await _httpClient
-                .GetAsync($"http://localhost:5174/api/get/Geocoding/city-by-lat-lng/lat-lng-by-cityname?name={name}");
+                .GetAsync($"http://localhost:8080/api/get/Geocoding/city-by-lat-lng/lat-lng-by-cityname?name={name}");
             var location = new Location(0, 0);
             var sunsetSunrise = new SunsetSunrise("","");
             
