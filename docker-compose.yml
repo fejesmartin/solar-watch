@@ -1,0 +1,8 @@
+﻿services:
+  solarwatchapp:
+    image: solarwatchapp
+    build:
+      context: .
+      dockerfile: SolarWatchApp/Dockerfile
+    ports:
+      - "8080:80"  # Map host port 8080 to container port 80
