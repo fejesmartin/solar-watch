@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using SolarWatchApp.JsonProcessor;
 using SolarWatchApp.Models;
 
 
@@ -7,39 +8,31 @@ namespace SolarWatchApp.Controllers;
 
 [ApiController]
 [Route("/api/get/[controller]/city-by-lat-lng")]
-public class GeocodingController: ControllerBase
+public class GeocodingController : ControllerBase
 {
-    private string APIKey = "3c1d6061af22d28e6de4e12694be2734";
-    private HttpClient _httpClient;
-    private string baseUrl = "http://api.openweathermap.org/geo/1.0/direct?q=";
-    private string baseUrlReverse = "http://api.openweathermap.org/geo/1.0/reverse?";
-    public GeocodingController(HttpClient httpClient)
+    private readonly string APIKey = "3c1d6061af22d28e6de4e12694be2734";
+    private readonly HttpClient _httpClient;
+    private readonly string baseUrl = "http://api.openweathermap.org/geo/1.0/direct?q=";
+    private readonly string baseUrlReverse = "http://api.openweathermap.org/geo/1.0/reverse?";
+    private readonly IJsonProcessor _jsonProcessor;
+
+    public GeocodingController(HttpClient httpClient, IJsonProcessor jsonProcessor)
     {
         _httpClient = httpClient;
+        _jsonProcessor = jsonProcessor;
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> GetCityByLatAndLng(double lat, double lng)
     {
-        //http://api.openweathermap.org/geo/1.0/reverse?lat={lat}&lon={lon}&limit={limit}&appid={API key}
         try
         {
-            HttpResponseMessage response =
-               await _httpClient.GetAsync($"{baseUrlReverse}lat={lat}&lon={lng}&limit=1&appid={APIKey}");
+            HttpResponseMessage response = await _httpClient.GetAsync($"{baseUrlReverse}lat={lat}&lon={lng}&limit=1&appid={APIKey}");
             if (response.IsSuccessStatusCode)
             {
-                // Read the JSON response as a string
                 string jsonResponse = await response.Content.ReadAsStringAsync();
-
-                // Parse the JSON string to a JSON document
-                using (JsonDocument doc = JsonDocument.Parse(jsonResponse))
-                {
-                    // Extract the "name" property
-                    var root = doc.RootElement;
-                    string cityName = root[0].GetProperty("name").GetString();
-
-                    return Ok(cityName);
-                }
+                string cityName = _jsonProcessor.GetStringProperty(jsonResponse, "name");
+                return Ok(cityName);
             }
             else
             {
@@ -55,34 +48,21 @@ public class GeocodingController: ControllerBase
     [HttpGet("lat-lng-by-cityname")]
     public async Task<IActionResult> GetLatAndLngByCityName(string name)
     {
-        //http://api.openweathermap.org/geo/1.0/direct?q=London&limit=5&appid={API key}
         try
         {
             HttpResponseMessage response = await _httpClient.GetAsync($"{baseUrl}{name}&limit=1&appid={APIKey}");
-
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponse = await response.Content.ReadAsStreamAsync();
-
-                using (JsonDocument doc = await JsonDocument.ParseAsync(jsonResponse))
-                {
-                    var root = doc.RootElement;
-
-                    var lat = root[0].GetProperty("lat").GetDouble();
-                    var lng = root[0].GetProperty("lon").GetDouble();
-
-                    Location location = new Location(lat, lng);
-
-                    return Ok(location);
-
-                }
-                
+                var lat = _jsonProcessor.GetDoubleProperty(jsonResponse, "lat");
+                var lng = _jsonProcessor.GetDoubleProperty(jsonResponse, "lon");
+                Location location = new Location(lat, lng);
+                return Ok(location);
             }
             else
             {
                 return StatusCode((int)response.StatusCode, "Error");
             }
-
         }
         catch (Exception e)
         {
