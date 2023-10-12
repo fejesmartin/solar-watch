@@ -1,8 +1,25 @@
 
+using Microsoft.EntityFrameworkCore;
 using SolarWatchApp.Controllers;
+using SolarWatchApp.DataServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load environment variables from the .env file
+DotNetEnv.Env.Load();
+
+// Load configuration from appsettings.json
+builder.Configuration.AddJsonFile("appsettings.json");
+
+// Add services to the container.
+builder.Services.AddDbContext<SolarWatchContext>();
+
+// Use the connection string from the .env file
+var connectionString = Environment.GetEnvironmentVariable("ASPNETCORE_CONNECTIONSTRING");
+builder.Services.AddDbContext<SolarWatchContext>(options =>
+{
+    options.UseSqlServer(connectionString);
+});
 // Add services to the container.
 builder.Services.AddHttpClient<SunsetSunriseController>();
 builder.Services.AddControllers();
@@ -20,8 +37,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
