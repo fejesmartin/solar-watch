@@ -1,4 +1,12 @@
 ﻿services:
+        
+  solarwatch-db:
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      SA_PASSWORD: "Martinka19980"
+      ACCEPT_EULA: Y
+    ports:
+      - "1433:1433"
   solarwatchapp:
     image: solarwatchapp
     build:
@@ -6,3 +14,7 @@
       dockerfile: SolarWatchApp/Dockerfile
     ports:
       - "8080:80"  # Map host port 8080 to container port 80
+    depends_on:
+      - solarwatch-db
+    environment:
+      ASPNETCORE_CONNECTIONSTRING: ${ASPNETCORE_CONNECTIONSTRING}

@@ -15,7 +15,8 @@
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5174",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_CONNECTIONSTRING": "Server=localhost,1433;Database=solarwatch-db;User Id=sa;Password=Martinka19980;trustServerCertificate=true;"
       }
     },
     "https": {
