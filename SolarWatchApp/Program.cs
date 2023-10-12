@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using SolarWatchApp.Controllers;
 using SolarWatchApp.DataServices;
+using SolarWatchApp.DataServices.Repositories;
+using SolarWatchApp.JsonProcessor;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,8 @@ builder.Services.AddDbContext<SolarWatchContext>(options =>
 });
 // Add services to the container.
 builder.Services.AddHttpClient<SunsetSunriseController>();
+builder.Services.AddScoped<ICityRepository, CityRepository>();
+builder.Services.AddTransient<IJsonProcessor, JsonProcessor>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
