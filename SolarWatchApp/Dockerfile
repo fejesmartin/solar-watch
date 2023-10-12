@@ -3,14 +3,11 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
 WORKDIR /app
 
 # Copy csproj and restore as distinct layers
-COPY *.csproj ./
+COPY SolarWatchApp/SolarWatchApp.csproj ./
 RUN dotnet restore
 
 # Copy everything else and build
-COPY . ./
-RUN dotnet clean
-RUN dotnet restore
-RUN dotnet build
+COPY SolarWatchApp/ ./
 RUN dotnet publish -c Release -o out
 
 # Build runtime image
