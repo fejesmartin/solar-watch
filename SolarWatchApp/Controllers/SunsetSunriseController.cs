@@ -29,8 +29,8 @@ public class SunsetSunriseController : ControllerBase
             if (responseMessage.IsSuccessStatusCode)
             {
                 var jsonResponse = await responseMessage.Content.ReadAsStringAsync();
-                var sunrise = _jsonProcessor.GetStringProperty(jsonResponse, "results.sunrise");
-                var sunset = _jsonProcessor.GetStringProperty(jsonResponse, "results.sunset");
+                var sunrise = _jsonProcessor.GetStringPropertySS(jsonResponse, "sunrise");
+                var sunset = _jsonProcessor.GetStringPropertySS(jsonResponse, "sunset");
 
                 var result = new SunsetSunrise(sunset, sunrise);
 
