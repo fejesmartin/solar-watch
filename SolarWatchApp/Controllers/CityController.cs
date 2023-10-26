@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SolarWatchApp.DataServices.Repositories;
 using SolarWatchApp.JsonProcessor;
 using SolarWatchApp.Models;
@@ -21,7 +22,7 @@ public class CityController : ControllerBase
         _httpClient = httpClient;
     }
 
-    [HttpGet]
+    [HttpGet, Authorize]
     public async Task<IActionResult> GetCityByName(string name)
     {
         try
