@@ -46,6 +46,9 @@ void AddDatabaseServices(WebApplicationBuilder builder, IConfiguration configura
         });
     });
     builder.Services.AddDbContext<UserContext>();
+    builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+        .AddEntityFrameworkStores<UserContext>()
+        .AddDefaultTokenProviders();
 }
 
 void AddHttpClientServices(WebApplicationBuilder builder)
@@ -144,26 +147,4 @@ void ConfigureCors(WebApplication app)
             .AllowAnyMethod()
             .AllowAnyHeader();
     });
-}
-
-void AddRoles()
-{
-    using var scope = app.Services.CreateScope(); // RoleManager is a scoped service, therefore we need a scope instance to access it
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-    var tAdmin = CreateAdminRole(roleManager);
-    tAdmin.Wait();
-
-    var tUser = CreateUserRole(roleManager);
-    tUser.Wait();
-}
-
-async Task CreateAdminRole(RoleManager<IdentityRole> roleManager)
-{
-    await roleManager.CreateAsync(new IdentityRole("Admin")); //The role string should better be stored as a constant or a value in appsettings
-}
-
-async Task CreateUserRole(RoleManager<IdentityRole> roleManager)
-{
-    await roleManager.CreateAsync(new IdentityRole("User")); //The role string should better be stored as a constant or a value in appsettings
 }

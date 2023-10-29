@@ -11,12 +11,12 @@ public class TokenService : ITokenService
 {
     private const int ExpirationMinutes = 30;
     
-    public string CreateToken(IdentityUser user)
+    public string CreateToken(IdentityUser user, string role)
     {
         
         var expiration = DateTime.UtcNow.AddMinutes(ExpirationMinutes);
         var token = CreateJwtToken(
-            CreateClaims(user),
+            CreateClaims(user, role),
             CreateSigningCredentials(),
             expiration
         );
@@ -24,7 +24,7 @@ public class TokenService : ITokenService
         return tokenHandler.WriteToken(token);
     }
 
-    private JwtSecurityToken CreateJwtToken(List<Claim> claims, SigningCredentials credentials, DateTime expiration)
+    private static JwtSecurityToken CreateJwtToken(List<Claim> claims, SigningCredentials credentials, DateTime expiration)
     {
         DotNetEnv.Env.Load();
         var validIssuer = Environment.GetEnvironmentVariable("VALIDISSUER");
@@ -40,7 +40,7 @@ public class TokenService : ITokenService
         );
     }
 
-    private List<Claim> CreateClaims(IdentityUser user)
+    private static List<Claim> CreateClaims(IdentityUser user, string? role)
     {
         try
         {
@@ -53,6 +53,12 @@ public class TokenService : ITokenService
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email)
             };
+
+            if (role != null)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+            
             return claims;
         }
         catch (Exception e)
