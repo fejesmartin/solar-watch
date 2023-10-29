@@ -4,28 +4,37 @@ namespace SolarWatchApp.DataServices.Authentication;
 
 public class AuthService : IAuthService
 {
+   
     private readonly UserManager<IdentityUser> _userManager;
     private readonly ITokenService _tokenService;
-
+    
     public AuthService(UserManager<IdentityUser> userManager, ITokenService tokenService)
     {
         _userManager = userManager;
         _tokenService = tokenService;
     }
 
-    public async Task<AuthResult> RegisterAsync(string email, string username, string password)
+    #region Register
+    public async Task<AuthResult> RegisterAsync(string email, string username, string password, string role)
     {
-        var result = await _userManager.CreateAsync(
-            new IdentityUser { UserName = username, Email = email }, password);
+        var user = new IdentityUser { UserName = username, Email = email };
+
+
+        var result = await _userManager.CreateAsync(user, password);
+            
 
         if (!result.Succeeded)
         {
             return FailedRegistration(result, email, username);
         }
 
+        await _userManager.AddToRoleAsync(user, role);
+        
         return new AuthResult(true, email, username, "");
     }
+    #endregion
 
+    #region FailedRegistration
     private static AuthResult FailedRegistration(IdentityResult result, string email, string username)
     {
         var authResult = new AuthResult(false, email, username, "");
@@ -37,7 +46,9 @@ public class AuthService : IAuthService
 
         return authResult;
     }
-    
+    #endregion
+
+    #region Login
     public async Task<AuthResult> LoginAsync(string email, string password)
     {
         var managedUser = await _userManager.FindByEmailAsync(email);
@@ -48,27 +59,43 @@ public class AuthService : IAuthService
         }
 
         var isPasswordValid = await _userManager.CheckPasswordAsync(managedUser, password);
+
         if (!isPasswordValid)
         {
             return InvalidPassword(email, managedUser.UserName);
         }
 
-        var accessToken = _tokenService.CreateToken(managedUser);
-
+        var accessToken = "";
+        
+        if (email == "admin@admin.com" && password == "admin123")
+        {
+            accessToken = _tokenService.CreateToken(managedUser, "Admin");
+        }
+        else
+        {
+            accessToken = _tokenService.CreateToken(managedUser, "User");
+        }
+        
         return new AuthResult(true, managedUser.Email, managedUser.UserName, accessToken);
     }
+    #endregion
 
+    #region InvalidEmail
     private static AuthResult InvalidEmail(string email)
     {
         var result = new AuthResult(false, email, "", "");
         result.ErrorMessages.Add("Bad credentials", "Invalid email");
         return result;
     }
+    #endregion
 
-    private static AuthResult InvalidPassword(string email, string userName)
+    #region InvalidPassword
+    private static AuthResult InvalidPassword(string email, string username)
     {
-        var result = new AuthResult(false, email, userName, "");
+        var result = new AuthResult(false, email, username, "");
         result.ErrorMessages.Add("Bad credentials", "Invalid password");
         return result;
     }
+    #endregion
+
 }
