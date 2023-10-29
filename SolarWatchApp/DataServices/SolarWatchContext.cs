@@ -7,7 +7,7 @@ namespace SolarWatchApp.DataServices;
 
 public class SolarWatchContext: DbContext
 {
-    public DbSet<City?> Cities { get; set; }
+    public DbSet<City> Cities { get; set; }
     public DbSet<SunsetSunrise> SunsetSunrises { get; set; }
 
     public SolarWatchContext(DbContextOptions<SolarWatchContext> options): base(options)

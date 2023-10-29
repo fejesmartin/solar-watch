@@ -31,8 +31,12 @@ public class GeocodingController : ControllerBase
             if (response.IsSuccessStatusCode)
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
-                string cityName = _jsonProcessor.GetStringProperty(jsonResponse, "name");
-                return Ok(cityName);
+                
+                    // Extract the "name" property
+                    var cityName = _jsonProcessor.GetStringPropertyGeo(jsonResponse, "name");
+
+                    return Ok(cityName);
+                
             }
             else
             {
@@ -53,9 +57,9 @@ public class GeocodingController : ControllerBase
             HttpResponseMessage response = await _httpClient.GetAsync($"{baseUrl}{name}&limit=1&appid={APIKey}");
             if (response.IsSuccessStatusCode)
             {
-                var jsonResponse = await response.Content.ReadAsStreamAsync();
-                var lat = _jsonProcessor.GetDoubleProperty(jsonResponse, "lat");
-                var lng = _jsonProcessor.GetDoubleProperty(jsonResponse, "lon");
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                var lat = _jsonProcessor.GetDoublePropertyGeo(jsonResponse, "lat");
+                var lng = _jsonProcessor.GetDoublePropertyGeo(jsonResponse, "lon");
                 Location location = new Location(lat, lng);
                 return Ok(location);
             }

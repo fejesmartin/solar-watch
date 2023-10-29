@@ -22,6 +22,10 @@ public class CityRepository: ICityRepository
     {
         return await _solarWatchContext.Cities.FindAsync(id);
     }
+    public async Task<City> GetCityByNameAsync(string name)
+    {
+        return await _solarWatchContext.Cities.FirstOrDefaultAsync(c => c.Name == name);
+    }
 
     public async Task<City> CreateCityAsync(City city)
     {
