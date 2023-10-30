@@ -1,6 +1,7 @@
 import { useState } from "react"
 import registrationURL from "../URLs/registrationURL"
 import { Form, Button } from "react-bootstrap";
+import "../Styles/registration-form.css";
 
 const RegisterForm = () => {
   const [email, setEmail] = useState('');
@@ -36,7 +37,8 @@ const RegisterForm = () => {
   };
 
   return (
-    <Form onSubmit={handleFormSubmit}>
+    <div className="reg-form-container">
+    <Form onSubmit={handleFormSubmit} className="reg-form">
       <Form.Group controlId="formBasicEmail">
         <Form.Label>Email address</Form.Label>
         <Form.Control
@@ -74,6 +76,7 @@ const RegisterForm = () => {
         Register
       </Button>
     </Form>
+    </div>
   );
 };
 
