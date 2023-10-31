@@ -3,7 +3,7 @@
   solarwatch-db:
     image: mcr.microsoft.com/mssql/server
     environment:
-      SA_PASSWORD: "Martinka19980"
+      SA_PASSWORD: ${SA_PASSWORD}
       ACCEPT_EULA: Y
     ports:
       - "1433:1433"
@@ -13,7 +13,7 @@
       context: .
       dockerfile: SolarWatchApp/Dockerfile
     ports:
-      - "8080:80"  # Map host port 8080 to container port 80
+      - "8080:80" 
     depends_on:
       - solarwatch-db
     environment:
