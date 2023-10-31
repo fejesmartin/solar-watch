@@ -15,7 +15,10 @@ public class UserContext : IdentityDbContext<IdentityUser, IdentityRole, string>
     {
         Env.Load();
         var connectionString = Environment.GetEnvironmentVariable("ASPNETCORE_CONNECTIONSTRING");
-        options.UseSqlServer(connectionString);
+        if (!options.IsConfigured)
+        {
+            options.UseSqlServer(connectionString);
+        }
 
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
