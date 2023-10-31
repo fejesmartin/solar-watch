@@ -14,7 +14,10 @@ public class SolarWatchContext: DbContext
 
     public SolarWatchContext(DbContextOptions<SolarWatchContext> options) : base(options)
     {
-        
+        if (Database.IsRelational())
+        {
+            Database.Migrate();
+        }
     }
 
     
