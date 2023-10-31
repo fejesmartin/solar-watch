@@ -148,3 +148,4 @@ void ConfigureCors(WebApplication app)
             .AllowAnyHeader();
     });
 }
+public partial class Program { }

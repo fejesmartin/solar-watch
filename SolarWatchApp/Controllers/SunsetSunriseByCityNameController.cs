@@ -6,7 +6,7 @@ using SolarWatchApp.Models;
 namespace SolarWatchApp.Controllers;
 
 [ApiController]
-[Route("/api/get/[controller]")]
+[Route("/api/[controller]")]
 public class SunsetSunriseByCityNameController : ControllerBase
 {
     private readonly HttpClient _httpClient;
