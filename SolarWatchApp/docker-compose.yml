@@ -2,7 +2,7 @@ services:
   solarwatch-db:
     image: mcr.microsoft.com/mssql/server
     environment:
-      SA_PASSWORD: ${SA_PASSWORD}
+      SA_PASSWORD: ${{ secrets.SA_PASSWORD }}
       ACCEPT_EULA: Y
     ports:
       - "1433:1433"
@@ -11,17 +11,17 @@ services:
     image: solarwatchapp
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: SolarWatchApp/Dockerfile
     ports:
       - "8080:80" 
     depends_on:
       - solarwatch-db
     environment:
-      ASPNETCORE_CONNECTIONSTRING: ${ASPNETCORE_CONNECTIONSTRING}
+      ASPNETCORE_CONNECTIONSTRING: ${{ secrets.ASPNETCORE_CONNECTIONSTRING }}
 
   solarwatch-frontend:
       build:
         context: .
-        dockerfile: ../SolarWatchFrontend/solar-watch-frontend/Dockerfile
+        dockerfile: SolarWatchFrontend/solar-watch-frontend/Dockerfile
       ports:
         - "3000:3000"
