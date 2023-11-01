@@ -5,7 +5,7 @@ FROM node:current
 WORKDIR /app
 
 # Copy package.json and package-lock.json to the container
-COPY package*.json ./
+COPY SolarWatchFrontend/package*.json ./
 
 # Install app dependencies
 RUN npm install
