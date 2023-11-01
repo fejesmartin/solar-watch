@@ -22,6 +22,6 @@ services:
   solarwatch-frontend:
     build:
       context: .
-      dockerfile: SolarWatchFrontend/Dockerfile
+      dockerfile: SolarWatchFrontend/solar-watch-frontend/Dockerfile
     ports:
       - "3000:3000"
